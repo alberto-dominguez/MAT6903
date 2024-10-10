@@ -3,14 +3,11 @@
 % Version History:
 %   2024-09-27 initial code
 
-clear
-clc
-close all
-tic
+tic; clear; clc; close all
 
 % model parameters
+a = 0.077629;      % physical return on the underlying (not used)
 sigma = 0.189205;  % volatility of underlying
-a = 0.077629;      % physical return on the underlying
 r = 0.039;         % 1 Yr Treas Rate on 9/20/2024 was 3.90%
 
 % option parameters
@@ -32,8 +29,6 @@ for i = 1:N
     str = str + strike_step;
 end
 
-toc
-
 % plot the results
 strikes = lo:strike_step:hi;
 hold on
@@ -44,3 +39,4 @@ plot(strikes,call,'DisplayName','Call')
 plot(strikes,put,'DisplayName','Put')
 legend
 hold off
+toc

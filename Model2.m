@@ -3,14 +3,11 @@
 % Version History:
 %   2024-10-04 initial code
 
-clear
-clc
-close all
-tic
+tic; clear; clc; close all
 
 % model parameters
+a = 0.077629;      % physical return on the underlying (not used)
 sigma = 0.189205;  % volatility of underlying
-a = 0.077629;      % physical return on the underlying
 r = 0.039;         % 1 Yr Treas Rate on 9/20/2024 was 3.90%
 mu = 0.0035;       % jump size mean
 sigJ = 0.0854;     % jump size standard deviation
@@ -33,7 +30,7 @@ hold on
 title('Model 2 with S0 = 5700 / Effect of Increasing Jump Intensity')
 xlabel('Strike Price') 
 ylabel('Call Option Value')
-for lam = 0:0.1:0.7
+for lam = 0:0.15:1.05
     str = lo;
     for i = 1:N
         call(i) = MJD(S0,T,str,sigma,r,lam,mu,sigJ,false);
@@ -44,7 +41,7 @@ for lam = 0:0.1:0.7
 end
 lgd = legend;
 lgd.NumColumns = 2;
-set(lgd, 'Location', 'Best')
+set(lgd, 'Location','northeast')
 hold off
 
 % calculate and plot put prices
@@ -54,7 +51,7 @@ hold on
 title('Model 2 with S0 = 5700 / Effect of Increasing Jump Intensity')
 xlabel('Strike Price') 
 ylabel('Put Option Value')
-for lam = 0:0.1:0.7
+for lam = 0:0.15:1.05
     str = lo;
     for i = 1:N
         put(i) = MJD(S0,T,str,sigma,r,lam,mu,sigJ,true);
@@ -65,7 +62,6 @@ for lam = 0:0.1:0.7
 end
 lgd = legend;
 lgd.NumColumns = 2;
-set(lgd, 'Location', 'Best')
+set(lgd, 'Location','northwest')
 hold off
-
 toc
