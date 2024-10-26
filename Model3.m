@@ -7,13 +7,12 @@ tic; clear; clc; close all
 
 % option parameters
 r = 0.039;          % 1 Yr Treas Rate on 9/20/2024 was 3.90%
-T = 1;              % time to expiry = 1 year
 S0 = 5700;          % index on 9/20/2024 was 5702.55
-K = 5800;           % strike price
+T = 1;              % time to expiry = 1 year
 
 % regime-switching parameters
 p12 = 0.2323;
-p21 = 0.7677;
+p21 = 1 - p12;
 
 % Create a merton object with the appropriate regime 1 model parameters
 a1 = 0.2385565;     % physical return on the underlying
@@ -38,14 +37,12 @@ dt = T/steps;
 % simulation
 % TODO - need to seed for reproducibility
 nPath = 10000;      % number of paths to simulate
-[paths1,times1] = simByMilstein2(mjdObj1,steps,Ntrials=nPath,DeltaTime=dt,...
-                         MonteCarloMethod="quasi",QuasiSequence="sobol",...
-                         BrownianMotionMethod="principal-components",...
-                         StorePaths=true);
-[paths2,times2] = simByMilstein2(mjdObj2,steps,Ntrials=nPath,DeltaTime=dt,...
-                         MonteCarloMethod="quasi",QuasiSequence="sobol",...
-                         BrownianMotionMethod="principal-components",...
-                         StorePaths=true);
+[paths1,times1] = simByMilstein2(mjdObj1, steps, Ntrials=nPath,...
+    DeltaTime=dt, MonteCarloMethod="quasi", QuasiSequence="sobol",...
+    BrownianMotionMethod="principal-components", StorePaths=true);
+[paths2,times2] = simByMilstein2(mjdObj2, steps, Ntrials=nPath,...
+    DeltaTime=dt, MonteCarloMethod="quasi", QuasiSequence="sobol",...
+    BrownianMotionMethod="principal-components", StorePaths=true);
 
 % plot 10 sample paths for each regime
 figure(1)
@@ -86,15 +83,3 @@ plot(strikes,put,'DisplayName','Put')
 legend
 hold off
 toc
-
-function option = prices(K,exp,paths1,p1,paths2,p2,isput)
-    if isput
-        put_payoff_1  = max(0, K - paths1(exp,:,:));
-        put_payoff_2  = max(0, K - paths2(exp,:,:));
-        option = mean(put_payoff_1)*p1 + mean(put_payoff_2)*p2;
-    else
-        call_payoff_1 = max(0, paths1(exp,:,:) - K);
-        call_payoff_2 = max(0, paths2(exp,:,:) - K);
-        option = mean(call_payoff_1)*p1 + mean(call_payoff_2)*p2;
-    end
-end
